@@ -21,11 +21,11 @@ from screeninfo import get_monitors
 # Импорт элементов игры
 from typing import List
 
-from sample_classes import pause_break, inventory
+from project.sample_classes import pause_break, inventory
 
 import pygame
 
-from work_dir.world_class.classes import CursObj, load_textures, Dress
+from project.work_dir.world_class.classes import CursObj, load_textures, Dress
 
 pygame.init()
 
@@ -656,7 +656,7 @@ class Indicator(pygame.sprite.Sprite):
                           self.image.get_height() - self.image.get_height() / 3 - 7,
                           self.image.get_width() * (player.vitality / player.max_vitality) - 130,
                           15))
-        print(player.vitality / player.max_vitality, player.vitality)
+        # print(player.vitality / player.max_vitality, player.vitality)
 
     def render(self, surf):
         surf.blit(self.image, (width * .06, height * .06))

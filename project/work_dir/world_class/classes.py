@@ -5,7 +5,7 @@ from pygame.mouse import get_pos, get_pressed
 from pygame.transform import scale2x, scale, flip
 import os
 
-from sample_classes.inventory import Item
+from project.sample_classes.inventory import Item
 
 
 def split_sprites(path, SCALE):
