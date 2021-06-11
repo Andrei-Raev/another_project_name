@@ -5,8 +5,10 @@
 # ---------- FPS CLOCK ----------
 import pygame
 
+pygame.init()
+
 # Создание шрифта для счетчика fps
-font = pygame.font.SysFont("Arial", 50)
+font = pygame.font.SysFont(None, 50)
 
 
 # Рендер четчика fps
