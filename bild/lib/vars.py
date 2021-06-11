@@ -1,3 +1,4 @@
+"""Собирает базовые значения, используемые в игре и подготавливает ее к запуску, что бы не нагружать основной код"""
 from json import load
 
 from lib.fps_clock import pygame, display_fps

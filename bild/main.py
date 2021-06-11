@@ -1,8 +1,7 @@
 # ---------- IMPORTS ----------
-import pygame
 from screeninfo import get_monitors
 
-from res.vars import *
+from lib.vars import *
 from res.textures import TEXTURES
 
 # ---------- INIT ----------
