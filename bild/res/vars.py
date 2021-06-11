@@ -6,8 +6,8 @@ from lib.fps_clock import pygame, display_fps
 with open('settings.json', 'r') as settings_file:
     settings = load(settings_file)
 
-SCALE_COF = 2
-FULLSCREEN = False
+SCALE_COF = settings['scale']
+FULLSCREEN = settings['false']
 
 # ---------- CONSTANTS ----------
 TYPE_BLOCKS = {1: 'grass', 2: 'stone', 3: 'sand'}
