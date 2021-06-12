@@ -14,7 +14,7 @@ font = pygame.font.SysFont(None, 50)
 # Рендер четчика fps
 def render(surface, value):
     global font
-    text_to_show = font.render(value, False, pygame.Color("white"))
+    text_to_show = font.render(value, True, pygame.Color("white"))
     surface.blit(text_to_show, (0, 0))
 
 

@@ -1,4 +1,5 @@
 {
   "fullscreen": false,
-  "scale": 2
+  "scale": 2,
+  "show_fps": false
 }

@@ -15,7 +15,7 @@ else:
     size = width, height = 640 * SCALE_COF, 360 * SCALE_COF
     render_screen = pygame.display.set_mode(size)
 
-pygame.display.set_caption('Game')
+pygame.display.set_caption('Disdain: New Horizon')
 
 # ---------- WORK SPACE ----------
 # pl = Player(TEXTURES['player'], (width // 2, height // 2), 7)
@@ -43,14 +43,16 @@ pygame.display.set_caption('Game')
 # player_state = Indicator(pl)
 # player_state.save_s()
 
+# ---------- CYCLE ----------
 main_running = True
-while main_running:
+while main_running:  # Основной цикл
     # pl.print_cord()
     # world_noise = PerlinNoiseFactory(2, octaves=4, unbias=False, seed=random.randint(1, 55))
     # tmp = World(0, (0, 0))
     # tmp.init()
     # raise Exception("hui")
 
+    # -={обработка неигровых событий}=-
     ev = pygame.event.get()
     for event in ev:
         if event.type == pygame.QUIT:
@@ -72,6 +74,7 @@ while main_running:
             pass
             # pl.move(event.rel)
 
+    # -={бработка смещения карты}=-
     if map_cords[0] < -256:
         # tmp.move_visible_area(1)
         map_cords[0] += 256
@@ -94,13 +97,17 @@ while main_running:
     if frame_pass:
         if frame_counter:
             render_screen.fill((47, 69, 56))
+
             # tmp.render(screen)
             # screen.blit(pl.image, pl.rect)
-            display_fps(render_screen, clock)
             # a = pygame.font.Font(None, 35)
             # a = a.render(str(pl.print_cord()), True, (250, 255, 255))
             # screen.blit(a, (10, 690))
             # ui.render(screen, pl.hp)
+
+            render_screen.blit(pygame.transform.scale(screen, size), (0, 0))
+            if SHOW_FPS:
+                display_fps(render_screen, clock)
             pygame.display.flip()
         frame_counter = not frame_counter
         clock.tick(fps)
