@@ -5,6 +5,7 @@ from random import randint
 from lib.vars import *
 from res.textures import TEXTURES, render_screen, size, height, width, SCALE_COF
 from lib.ui import Button
+from res.main_menu import main_menu
 
 # ---------- INIT ----------
 screen = pygame.surface.Surface((320, 180))
@@ -43,10 +44,11 @@ for i in range(width):
 # player_state = Indicator(pl)
 # player_state.save_s()
 
-bt = Button('button-1', 'Милана', (30, 30))
-screen.fill((23, 32, 37))
+bt = Button('default_big', 'Милана', (30, 30), 202)
+screen.fill((104, 151, 187))
 # ---------- CYCLE ----------
 main_running = True
+main_menu()  # Главное меню
 while main_running:  # Основной цикл
     # pl.print_cord()
     # world_noise = PerlinNoiseFactory(2, octaves=4, unbias=False, seed=random.randint(1, 55))
