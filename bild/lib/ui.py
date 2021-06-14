@@ -85,7 +85,7 @@ class Button(BaseGuiObject):
         self.surfaces[1].blit(sides_hover[0], (0, 0))
         self.surfaces[2].blit(sides_pressed[0], (0, 0))
 
-        for i in range(self.width // 2-2):
+        for i in range(self.width // 2 - 2):
             ran = randint(0, len(self.textures['center']) - 1)
             self.surfaces[0].blit(self.textures['center'][ran], (i * 2 + 3, 0))
             self.surfaces[1].blit(self.textures_hover['center'][ran], (i * 2 + 3, 0))
@@ -106,13 +106,11 @@ class Button(BaseGuiObject):
                 self.surface = self.surfaces[2]
             else:
                 self.surface = self.surfaces[1]
-            print(1)
         else:
             self.surface = self.surfaces[0]
-            print(2)
 
         for ev in event:
-            if ev.type == pygame.MOUSEBUTTONUP:
+            if ev.type == pygame.MOUSEBUTTONDOWN:
                 if rect.collidepoint((ev.pos[0] / SCALE_COF, ev.pos[1] / SCALE_COF)):
                     print(12121)
 
