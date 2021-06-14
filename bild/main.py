@@ -1,23 +1,23 @@
 # ---------- IMPORTS ----------
-from screeninfo import get_monitors
+import time
+from random import randint
 
 from lib.vars import *
-from res.textures import TEXTURES
+from res.textures import TEXTURES, render_screen, size, height, width, SCALE_COF
+from lib.ui import Button
 
 # ---------- INIT ----------
-screen = pygame.surface.Surface((640, 360))
+screen = pygame.surface.Surface((320, 180))
 frame_pass, frame_counter = True, False
-
-if FULLSCREEN:
-    size = width, height = get_monitors()[0].width, get_monitors()[0].height
-    render_screen = pygame.display.set_mode(size, pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.FULLSCREEN)
-else:
-    size = width, height = 640 * SCALE_COF, 360 * SCALE_COF
-    render_screen = pygame.display.set_mode(size)
 
 pygame.display.set_caption('Disdain: New Horizon')
 
 # ---------- WORK SPACE ----------
+'''
+for i in range(width):
+    for j in range(height):
+        pygame.draw.rect(screen, [randint(0, 255)] * 3, (i-1, j-1, i-1, j-1))
+'''
 # pl = Player(TEXTURES['player'], (width // 2, height // 2), 7)
 
 # start_time_m = time.time()
@@ -43,6 +43,8 @@ pygame.display.set_caption('Disdain: New Horizon')
 # player_state = Indicator(pl)
 # player_state.save_s()
 
+bt = Button('button-1', 'Милана', (30, 30))
+screen.fill((23, 32, 37))
 # ---------- CYCLE ----------
 main_running = True
 while main_running:  # Основной цикл
@@ -53,13 +55,13 @@ while main_running:  # Основной цикл
     # raise Exception("hui")
 
     # -={обработка неигровых событий}=-
-    ev = pygame.event.get()
-    for event in ev:
+    events = pygame.event.get()
+    for event in events:
         if event.type == pygame.QUIT:
             main_running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                cords = event.pos
+                cords = event.pos[0] / SCALE_COF, event.pos[1] / SCALE_COF
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 pass
@@ -94,23 +96,25 @@ while main_running:  # Основной цикл
     # pl.tick()
 
     # Рендер основного окна
+    if frame_counter:
+        # tmp.render(screen)
+        # screen.blit(pl.image, pl.rect)
+        # a = pygame.font.Font(None, 35)
+        # a = a.render(str(pl.print_cord()), True, (250, 255, 255))
+        # screen.blit(a, (10, 690))
+        # ui.render(screen, pl.hp)
+
+        bt.render(screen, events)
+
+        render_screen.blit(pygame.transform.scale(screen, size), (0, 0))
+        if SHOW_FPS:
+            display_fps(render_screen, clock)
+        pygame.display.flip()
     if frame_pass:
-        if frame_counter:
-            render_screen.fill((47, 69, 56))
-
-            # tmp.render(screen)
-            # screen.blit(pl.image, pl.rect)
-            # a = pygame.font.Font(None, 35)
-            # a = a.render(str(pl.print_cord()), True, (250, 255, 255))
-            # screen.blit(a, (10, 690))
-            # ui.render(screen, pl.hp)
-
-            render_screen.blit(pygame.transform.scale(screen, size), (0, 0))
-            if SHOW_FPS:
-                display_fps(render_screen, clock)
-            pygame.display.flip()
         frame_counter = not frame_counter
-        clock.tick(fps)
+    else:
+        frame_counter = True
+    clock.tick(fps)
 
 pygame.quit()  # Завершение работы
 

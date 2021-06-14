@@ -1,8 +1,126 @@
 """Элементы интерфейса игры"""
+from json import load
 
 import pygame
+from random import randint
+
+from res.textures import SCALE_COF
 
 
+class BaseGuiObject:
+    def __init__(self, position, layer):
+        self.surface = pygame.surface.Surface((0, 0))
+        self.position = position
+        self.layer = layer
+
+
+class Button(BaseGuiObject):
+    def __init__(self, texture_type, text, position):
+        super().__init__(position, 5)
+        self.text = str(text)
+
+        with open(f'res/textures/gui/buttons/{texture_type}/data.json', 'r') as data_file:
+            tmp_dict = load(data_file)
+            order = tmp_dict['order']
+            self.text_color = tmp_dict['text_color']
+            self.font = pygame.font.SysFont('comic sans ms', tmp_dict['font_size'])
+
+        self.textures = {'side': [], 'center': []}
+        self.textures_hover = {'side': [], 'center': []}
+        self.textures_pressed = {'side': [], 'center': []}
+
+        tmp_surface = pygame.image.load(f'res/textures/gui/buttons/{texture_type}/texture.png').convert_alpha()
+        tmp_surface_hover = pygame.image.load(f'res/textures/gui/buttons/{texture_type}/texture.png').convert_alpha()
+        tmp_surface_pressed = pygame.image.load(
+            f'res/textures/gui/buttons/{texture_type}/texture.png').convert_alpha()
+
+        count = 0
+
+        for texture_type in order:
+            if texture_type == 'side':
+                self.textures['side'].append(tmp_surface.subsurface(count, 0, 3, tmp_surface.get_height()))
+                self.textures_hover['side'].append(
+                    tmp_surface_hover.subsurface(count, 0, 3, tmp_surface.get_height()))
+                self.textures_pressed['side'].append(
+                    tmp_surface_pressed.subsurface(count, 0, 3, tmp_surface.get_height()))
+                count += 3
+            elif texture_type == 'center':
+                self.textures['center'].append(tmp_surface.subsurface(count, 0, 2, tmp_surface.get_height()))
+                self.textures_hover['center'].append(
+                    tmp_surface_hover.subsurface(count, 0, 2, tmp_surface.get_height()))
+                self.textures_pressed['center'].append(
+                    tmp_surface_pressed.subsurface(count, 0, 2, tmp_surface.get_height()))
+                count += 2
+
+        self.on_click = [[False], [False], [False]]
+        self.surfaces = []
+
+        self.draw()
+
+    def draw(self):
+        text_surface = self.font.render(self.text, False, self.text_color)
+
+        sides = [self.textures['side'][randint(0, len(self.textures['side']) - 1)],
+                 pygame.transform.flip(self.textures['side'][randint(0, len(self.textures['side']) - 1)], True, False)]
+        sides_hover = [self.textures_hover['side'][randint(0, len(self.textures))],
+                       pygame.transform.flip(self.textures_hover['side'][randint(0, len(self.textures['side']) - 1)],
+                                             True, False)]
+        sides_pressed = [self.textures_pressed['side'][randint(0, len(self.textures))],
+                         pygame.transform.flip(
+                             self.textures_pressed['side'][randint(0, len(self.textures['side']) - 1)],
+                             True, False)]
+
+        self.surfaces = [pygame.surface.Surface((text_surface.get_width() + 6, text_surface.get_height() + 4)),
+                         pygame.surface.Surface((text_surface.get_width() + 6, text_surface.get_height() + 4)),
+                         pygame.surface.Surface((text_surface.get_width() + 6, text_surface.get_height() + 4))]
+
+        for surf in self.surfaces:
+            surf.fill((0, 0, 0))
+            surf.set_colorkey((0, 0, 0))
+            surf.convert_alpha()
+
+        self.surfaces[0].blit(sides[0], (0, 0))
+        self.surfaces[1].blit(sides_hover[0], (0, 0))
+        self.surfaces[2].blit(sides_pressed[0], (0, 0))
+
+        for i in range(text_surface.get_width() // 2 + 1):
+            ran = randint(0, len(self.textures['center']) - 1)
+            self.surfaces[0].blit(self.textures['center'][ran], (i * 2 + 3, 0))
+            self.surfaces[1].blit(self.textures_hover['center'][ran], (i * 2 + 3, 0))
+            self.surfaces[2].blit(self.textures_pressed['center'][ran], (i * 2 + 3, 0))
+
+        self.surfaces[0].blit(sides[1], (self.surfaces[0].get_width() - 3, 0))
+        self.surfaces[1].blit(sides_hover[1], (self.surfaces[0].get_width() - 3, 0))
+        self.surfaces[2].blit(sides_pressed[1], (self.surfaces[0].get_width() - 3, 0))
+
+        self.surfaces[0].blit(text_surface, (3, 0))
+        self.surfaces[1].blit(text_surface, (3, 0))
+        self.surfaces[2].blit(text_surface, (3, 0))
+
+    def render(self, surface, event):
+        rect = self.surfaces[0].get_rect(topleft=self.position)
+        if rect.collidepoint(pygame.mouse.get_pos()[0] / SCALE_COF, pygame.mouse.get_pos()[0] / SCALE_COF):
+            self.surface = self.surfaces[1]
+            print(1)
+        else:
+            self.surface = self.surfaces[0]
+            print(2)
+
+        for ev in event:
+            if ev.type == pygame.MOUSEBUTTONDOWN:
+                if rect.collidepoint((ev.pos[0] / SCALE_COF, ev.pos[1] / SCALE_COF)):
+                    self.surface = self.surfaces[2]
+
+        if not randint(0, 15):
+            self.draw()
+
+        surface.blit(self.surface, self.position)
+
+    def set_on_click(self, func, but: int, *args):
+        self.on_click[but - 1] = [True, func, args]
+
+
+'''
 class UI:
     def __init__(self, max_hp):
         self.indicator = Indicator(pl)
@@ -112,3 +230,4 @@ class ProgressBar:
             self.progress = 0
         elif self.progress > self.max_progress:
             self.progress = self.max_progress
+'''

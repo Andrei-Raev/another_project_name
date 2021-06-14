@@ -7,12 +7,21 @@ import os
 
 import pygame
 from PIL import Image
+from screeninfo import get_monitors
 
 from lib.base_func import split_gorisontal_sprites
+from lib.vars import FULLSCREEN, SCALE_COF
 
 os.chdir('res')
 pygame.init()
-pygame.display.set_mode((0, 0))
+
+if FULLSCREEN:
+    size = width, height = get_monitors()[0].width, get_monitors()[0].height
+    render_screen = pygame.display.set_mode(size, pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.FULLSCREEN)
+    SCALE_COF = width / 320
+else:
+    size = width, height = 320 * SCALE_COF, 180 * SCALE_COF
+    render_screen = pygame.display.set_mode(size)
 
 
 def load_textures(direct):
@@ -58,8 +67,13 @@ tmp_clothes_textures = {}
 
 for texture in os.listdir(r'textures\clothes'):
     tmp_clothes_textures.update({texture: load_textures(r"textures/clothes/" + texture)})
+
+tmp_ui_textures = {}
+tmp_ui_textures.update({'hud': pygame.image.load('textures/gui/hud.png').convert()})
+
 # Общая сборка
 TEXTURES = {'block': tmp_block_textures,
+            'ui': tmp_ui_textures,
             # 'player': tmp_player_textures,
             'none': pygame.image.load('textures/block/none.jpg').convert(),
             'clothes': tmp_clothes_textures}
