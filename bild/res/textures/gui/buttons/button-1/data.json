@@ -1,0 +1,19 @@
+{
+  "order": [
+    "side",
+    "side",
+    "side",
+    "center",
+    "center",
+    "center",
+    "center",
+    "center",
+    "center"
+  ],
+  "font_size": 14,
+  "text_color": [
+    255,
+    255,
+    255
+  ]
+}
