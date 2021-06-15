@@ -1,16 +1,17 @@
 from lib.vars import *
 from res.textures import TEXTURES, render_screen, size, height, width, SCALE_COF
-from lib.ui import Button
+from lib.ui import Button, TitleLossButton
 
 
 def main_menu():
     frame_pass, frame_counter = True, False
-    buttons = [Button('default_big', 'Новая игра', (10, 146), 140),
-               Button('default_big', 'Загрузить игру', (170, 146), 140)]
+    buttons = [Button('default_big', 'Новая игра', (10, 146), 130),
+               Button('default_big', 'Загрузить игру', (180, 146), 130),
+               TitleLossButton('play_button', (145, 146)),
+               TitleLossButton('settings_button', (280, 10))]
 
     render_screen = pygame.display.get_surface()
-    background = pygame.transform.scale(pygame.image.load('res/textures/gui/main_menu/backgrounds/0.png').convert(),
-                                        (320, 180))
+    background = pygame.image.load('res/textures/gui/main_menu/backgrounds/1.png').convert()
 
     screen = pygame.surface.Surface((320, 180))
 

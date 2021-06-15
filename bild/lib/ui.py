@@ -14,6 +14,13 @@ class BaseGuiObject:
         self.layer = layer
 
 
+class Font:
+    def __init__(self):
+        pass
+
+    def render(self, text):
+        pass
+
 class Button(BaseGuiObject):
     def __init__(self, texture_type, text, position, width=0):
         super().__init__(position, 5)
@@ -98,6 +105,39 @@ class Button(BaseGuiObject):
         self.surfaces[0].blit(text_surface, (self.width // 2 - text_surface.get_width() // 2, 0))
         self.surfaces[1].blit(text_surface, (self.width // 2 - text_surface.get_width() // 2, 0))
         self.surfaces[2].blit(text_surface, (self.width // 2 - text_surface.get_width() // 2, 0))
+
+    def render(self, surface, event):
+        rect = self.surfaces[0].get_rect(topleft=self.position)
+        if rect.collidepoint(pygame.mouse.get_pos()[0] / SCALE_COF, pygame.mouse.get_pos()[1] / SCALE_COF):
+            if pygame.mouse.get_pressed(3)[0]:
+                self.surface = self.surfaces[2]
+            else:
+                self.surface = self.surfaces[1]
+        else:
+            self.surface = self.surfaces[0]
+
+        for ev in event:
+            if ev.type == pygame.MOUSEBUTTONDOWN:
+                if rect.collidepoint((ev.pos[0] / SCALE_COF, ev.pos[1] / SCALE_COF)):
+                    print(12121)
+
+        # if not randint(0, 15):
+        #     self.draw()
+
+        surface.blit(self.surface, self.position)
+
+    def set_on_click(self, func, but: int, *args):
+        self.on_click[but - 1] = [True, func, args]
+
+
+class TitleLossButton(BaseGuiObject):
+    def __init__(self, texture_type, position):
+        super().__init__(position, 5)
+        self.surfaces = [pygame.image.load(f'res/textures/gui/buttons/{texture_type}/texture.png').convert_alpha(),
+                         pygame.image.load(f'res/textures/gui/buttons/{texture_type}/texture_hover.png').convert_alpha(),
+                         pygame.image.load(f'res/textures/gui/buttons/{texture_type}/texture_pressed.png').convert_alpha()]
+
+        self.on_click = [[False], [False], [False]]
 
     def render(self, surface, event):
         rect = self.surfaces[0].get_rect(topleft=self.position)
