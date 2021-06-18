@@ -7,6 +7,14 @@ from random import randint
 from res.textures import SCALE_COF
 
 
+def collidepoint(rect: pygame.rect.Rect, point: tuple):
+    coords = [rect.x, rect.y, rect.x + rect.w, rect.y + rect.h]
+    if coords[0] <= point[0] <= coords[2] and coords[1] <= point[1] <= coords[3]:
+        return True
+    else:
+        return False
+
+
 class BaseGuiObject:
     def __init__(self, position, layer):
         self.surface = pygame.surface.Surface((0, 0))
@@ -20,6 +28,7 @@ class Font:
 
     def render(self, text):
         pass
+
 
 class Button(BaseGuiObject):
     def __init__(self, texture_type, text, position, width=0):
@@ -118,8 +127,16 @@ class Button(BaseGuiObject):
 
         for ev in event:
             if ev.type == pygame.MOUSEBUTTONDOWN:
-                if rect.collidepoint((ev.pos[0] / SCALE_COF, ev.pos[1] / SCALE_COF)):
-                    print(12121)
+                if collidepoint(rect, (ev.pos[0] / SCALE_COF, ev.pos[1] / SCALE_COF)):
+                    if ev.button == 1:
+                        if self.on_click[0][0]:
+                            self.on_click[0][1](*self.on_click[0][2])
+                    if ev.button == 2:
+                        if self.on_click[1][0]:
+                            self.on_click[1][1](*self.on_click[1][2])
+                    if ev.button == 3:
+                        if self.on_click[2][0]:
+                            self.on_click[2][1](*self.on_click[2][2])
 
         # if not randint(0, 15):
         #     self.draw()
@@ -134,8 +151,10 @@ class TitleLossButton(BaseGuiObject):
     def __init__(self, texture_type, position):
         super().__init__(position, 5)
         self.surfaces = [pygame.image.load(f'res/textures/gui/buttons/{texture_type}/texture.png').convert_alpha(),
-                         pygame.image.load(f'res/textures/gui/buttons/{texture_type}/texture_hover.png').convert_alpha(),
-                         pygame.image.load(f'res/textures/gui/buttons/{texture_type}/texture_pressed.png').convert_alpha()]
+                         pygame.image.load(
+                             f'res/textures/gui/buttons/{texture_type}/texture_hover.png').convert_alpha(),
+                         pygame.image.load(
+                             f'res/textures/gui/buttons/{texture_type}/texture_pressed.png').convert_alpha()]
 
         self.on_click = [[False], [False], [False]]
 
@@ -151,8 +170,16 @@ class TitleLossButton(BaseGuiObject):
 
         for ev in event:
             if ev.type == pygame.MOUSEBUTTONDOWN:
-                if rect.collidepoint((ev.pos[0] / SCALE_COF, ev.pos[1] / SCALE_COF)):
-                    print(12121)
+                if collidepoint(rect, (ev.pos[0] / SCALE_COF, ev.pos[1] / SCALE_COF)):
+                    if ev.button == 1:
+                        if self.on_click[0][0]:
+                            self.on_click[0][1](*self.on_click[0][2])
+                    if ev.button == 2:
+                        if self.on_click[1][0]:
+                            self.on_click[1][1](*self.on_click[1][2])
+                    if ev.button == 3:
+                        if self.on_click[2][0]:
+                            self.on_click[2][1](*self.on_click[2][2])
 
         # if not randint(0, 15):
         #     self.draw()

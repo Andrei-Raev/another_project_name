@@ -5,10 +5,11 @@ from lib.ui import Button, TitleLossButton
 
 def main_menu():
     frame_pass, frame_counter = True, False
-    buttons = [Button('default_big', 'Новая игра', (10, 146), 130),
-               Button('default_big', 'Загрузить игру', (180, 146), 130),
+    buttons = [Button('default_big', 'Выйти', (10, 146), 130),
+               Button('default_big', 'Новая игра', (180, 146), 130),
                TitleLossButton('play_button', (145, 146)),
                TitleLossButton('settings_button', (280, 10))]
+    buttons[0].set_on_click(exit, 1, 'Выход')
 
     render_screen = pygame.display.get_surface()
     background = pygame.image.load('res/textures/gui/main_menu/backgrounds/1.png').convert()
