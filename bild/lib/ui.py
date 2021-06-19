@@ -4,7 +4,9 @@ from json import load
 import pygame
 from random import randint
 
-from res.textures import SCALE_COF
+from lib.image_processing import blur
+from lib.vars import *
+from res.textures import TEXTURES, render_screen, size, height, width, SCALE_COF
 
 
 def collidepoint(rect: pygame.rect.Rect, point: tuple):
@@ -147,6 +149,37 @@ class Button(BaseGuiObject):
         self.on_click[but - 1] = [True, func, args]
 
 
+class WithoutTextureButton(BaseGuiObject):
+    def __init__(self, text, position):
+        super().__init__(position, 5)
+        self.text = str(text)
+
+        self.font = pygame.font.Font(r'D:\temp\game\bild\res\textures\gui\font.ttf', 25)
+
+        self.on_click = [[False], [False], [False]]
+        self.surface = self.font.render(self.text, False, (32, 19, 7))
+
+    def render(self, surface, event):
+        rect = self.surface.get_rect(topleft=self.position)
+        for ev in event:
+            if ev.type == pygame.MOUSEBUTTONDOWN:
+                if collidepoint(rect, (ev.pos[0] / SCALE_COF, ev.pos[1] / SCALE_COF)):
+                    if ev.button == 1:
+                        if self.on_click[0][0]:
+                            self.on_click[0][1](*self.on_click[0][2])
+                    if ev.button == 2:
+                        if self.on_click[1][0]:
+                            self.on_click[1][1](*self.on_click[1][2])
+                    if ev.button == 3:
+                        if self.on_click[2][0]:
+                            self.on_click[2][1](*self.on_click[2][2])
+
+        surface.blit(self.surface, self.position)
+
+    def set_on_click(self, func, but: int, *args):
+        self.on_click[but - 1] = [True, func, args]
+
+
 class TitleLossButton(BaseGuiObject):
     def __init__(self, texture_type, position):
         super().__init__(position, 5)
@@ -181,13 +214,74 @@ class TitleLossButton(BaseGuiObject):
                         if self.on_click[2][0]:
                             self.on_click[2][1](*self.on_click[2][2])
 
-        # if not randint(0, 15):
-        #     self.draw()
-
         surface.blit(self.surface, self.position)
 
     def set_on_click(self, func, but: int, *args):
         self.on_click[but - 1] = [True, func, args]
+
+
+class Window(BaseGuiObject):
+    def __init__(self, texture_type, position):
+        super().__init__(position, 4)
+
+
+def submit_window(screen, title: str, on_confirm, *args):
+    def close():
+        global running
+        running = False
+
+    frame_pass, frame_counter = True, False
+    buttons = [WithoutTextureButton('Подтвердить', (34, 146)),
+               WithoutTextureButton('Отмена', (214, 146))]
+    buttons[0].set_on_click(on_confirm, 1, *args)
+    buttons[1].set_on_click(close, 1)
+
+    render_screen = pygame.display.get_surface()
+
+    background = blur(screen, 2)
+    # tmp_background = pygame.image.load('res/textures/gui/windows/submit/background.png').convert()
+    # background.blit(tmp_background,
+    #                 tmp_background.get_rect(center=(render_screen.get_width() // 2, render_screen.get_height() // 2)))
+
+    title = pygame.font.Font(r'D:\temp\game\bild\res\textures\gui\font.ttf', 25).render(title, False, (32, 19, 7))
+    background.blit(title,
+                    title.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2)))
+
+    running = True
+    while running:
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    cords = event.pos[0] / SCALE_COF, event.pos[1] / SCALE_COF
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    pass
+                elif event.key == pygame.K_ESCAPE:
+                    pass
+                elif event.key == pygame.K_TAB:
+                    pass
+            elif event.type == pygame.MOUSEMOTION:
+                pass
+
+        # Рендер основного окна
+        if frame_counter:
+            screen.blit(background, (0, 0))
+
+            for bt in buttons:
+                bt.render(screen, events)
+
+            render_screen.blit(pygame.transform.scale(screen, size), (0, 0))
+            if SHOW_FPS:
+                display_fps(render_screen, clock)
+            pygame.display.flip()
+        if frame_pass:
+            frame_counter = not frame_counter
+        else:
+            frame_counter = True
+        clock.tick(fps)
 
 
 '''

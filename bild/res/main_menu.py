@@ -1,6 +1,6 @@
 from lib.vars import *
 from res.textures import TEXTURES, render_screen, size, height, width, SCALE_COF
-from lib.ui import Button, TitleLossButton
+from lib.ui import Button, TitleLossButton, submit_window
 
 
 def main_menu():
@@ -9,12 +9,12 @@ def main_menu():
                Button('default_big', 'Новая игра', (180, 146), 130),
                TitleLossButton('play_button', (145, 146)),
                TitleLossButton('settings_button', (280, 10))]
-    buttons[0].set_on_click(exit, 1, 'Выход')
 
     render_screen = pygame.display.get_surface()
     background = pygame.image.load('res/textures/gui/main_menu/backgrounds/1.png').convert()
 
     screen = pygame.surface.Surface((320, 180))
+    buttons[0].set_on_click(submit_window, 1, screen, "Вы действительно хотите выйти?", exit, "Выход")
 
     running = True
     while running:

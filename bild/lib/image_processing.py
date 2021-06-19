@@ -1,7 +1,28 @@
 """Библиотека для обработки изображений и поверхностей"""
 
 import pygame
-from PIL import Image
+from PIL import Image, ImageFilter
+
+
+def blur(surface: pygame.surface.Surface, rad: int) -> pygame.surface.Surface:
+    """Размывает изображение по радиусу
+
+     Аргументы:
+     surface (pygame.surface.Surface) - исходная поверхность
+     rad (int) - радиус размытия
+
+     Возвращает поверхность"""
+
+    strFormat = 'RGBA'
+
+    raw_str = pygame.image.tostring(surface, strFormat, False)
+    image = Image.frombytes(strFormat, surface.get_size(), raw_str)
+
+    image = image.filter(ImageFilter.GaussianBlur(rad))
+
+    raw_str = image.tobytes("raw", strFormat)
+    result = pygame.image.fromstring(raw_str, image.size, strFormat)
+    return result
 
 
 def save_surface(surface: pygame.surface.Surface, save=False) -> None:
