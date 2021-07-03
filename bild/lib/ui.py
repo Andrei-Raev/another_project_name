@@ -229,6 +229,7 @@ def submit_window(screen, title: str, on_confirm, *args):
     def close():
         global running
         running = False
+        return
 
     frame_pass, frame_counter = True, False
     buttons = [WithoutTextureButton('Подтвердить', (34, 146)),
