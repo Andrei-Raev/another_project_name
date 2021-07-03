@@ -44,11 +44,11 @@ for i in range(width):
 # player_state = Indicator(pl)
 # player_state.save_s()
 
-bt = Button('default_big', 'Милана', (30, 30), 202)
+# bt = Button('default_big', 'Милана', (30, 30), 202)
 screen.fill((104, 151, 187))
 # ---------- CYCLE ----------
 main_running = True
-main_menu()  # Главное меню
+# main_menu()  # Главное меню
 while main_running:  # Основной цикл
     # pl.print_cord()
     # world_noise = PerlinNoiseFactory(2, octaves=4, unbias=False, seed=random.randint(1, 55))
@@ -106,7 +106,7 @@ while main_running:  # Основной цикл
         # screen.blit(a, (10, 690))
         # ui.render(screen, pl.hp)
 
-        bt.render(screen, events)
+        # bt.render(screen, events)
 
         render_screen.blit(pygame.transform.scale(screen, size), (0, 0))
         if SHOW_FPS:
