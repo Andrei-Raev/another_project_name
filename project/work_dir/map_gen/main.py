@@ -99,7 +99,7 @@ pnf_bioms = PerlinNoiseFactory(3, octaves=1, tile=(10, 10, 10), unbias=False)
 world_noise = [list()]
 
 
-@njit()
+
 def get_biome(cof):
     if -0.5 <= cof <= 0.5:
         cof = cof * 1.8
@@ -130,7 +130,7 @@ def get_biome(cof):
     return 0, 0, 0  # На всякий случай
 
 
-@njit()
+
 def color_asian(cof):
     if -0.5 <= cof <= 0.5:
         cof = cof * 1.8

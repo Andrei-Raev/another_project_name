@@ -16,7 +16,7 @@ def lerp(t, a, b):
 
 
 class PerlinNoiseFactory(object):
-    def __init__(self, dimension, octaves=1, seed=1, tile=(), unbias=False):
+    def __init__(self, dimension=3, octaves=1, seed=1, tile=(), unbias=False):
         self.dimension = dimension
         self.octaves = octaves
         self.tile = tile + (0,) * dimension

@@ -48,7 +48,7 @@ for i in range(width):
 screen.fill((104, 151, 187))
 # ---------- CYCLE ----------
 main_running = True
-# main_menu()  # Главное меню
+main_menu()  # Главное меню
 while main_running:  # Основной цикл
     # pl.print_cord()
     # world_noise = PerlinNoiseFactory(2, octaves=4, unbias=False, seed=random.randint(1, 55))
