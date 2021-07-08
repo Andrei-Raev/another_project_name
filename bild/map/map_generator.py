@@ -1,3 +1,4 @@
+import math
 import time
 from math import cos, sin, radians, pi
 from pprint import pprint
@@ -49,9 +50,9 @@ def color_asian(cof):
             cof = (cof + 0.5) * 0.2 - 0.9
 
     if cof <= 0:
-        if -0.05 < cof <= 0:
+        if -0.1 < cof <= 0:
             return 0, 60, 151  # Мелководье
-        elif cof <= -0.05:
+        elif cof <= -0.1:
             return 0, 30, 101  # Вода
     else:
         if 0 <= cof < 0.05:
@@ -72,6 +73,7 @@ class Point:
         self.x = x
         self.y = y
         self.color = (randint(0, 255), randint(0, 255), randint(0, 255))
+        self.biome = 0
 
     def get_cords(self) -> list:
         return self.x, self.y
@@ -100,6 +102,24 @@ def dist(p1: tuple, p2: Point):
     return ((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2) ** 0.5
 
 
+def boarder_dist(point: tuple, shape):
+    dists = []
+    for i in range(len(shape)):
+        p1 = shape[i]
+
+        try:
+            p2 = shape[i + 1]
+        except IndexError:
+            p2 = shape[0]
+
+        x_diff = p2.x - p1.x
+        y_diff = p2.y - p1.y
+        num = abs(y_diff * point[0] - x_diff * point[1] + p2.x * p1.y - p2.y * p1.x)
+        den = math.sqrt(y_diff ** 2 + x_diff ** 2)
+        dists.append(num / den)
+    return min(dists)
+
+
 def find_nearest(coordinate, matrix):
     return min(matrix, key=lambda x: dist(coordinate, x))
 
@@ -107,25 +127,25 @@ def find_nearest(coordinate, matrix):
 # НАЧАЛО АЛГОРИТМА ГЕНЕРАЦИИ МИРА
 
 size = truth_size = 400
-res = 70
+res = 120
 
 frames = 1
 world_noise = [list()]
 
 start_time = time.time()
 
+seed(int(input('Сид >>>\t')))
+
 woronoi = []
 for _ in range(200):
     woronoi.append(Point(randint(0, 400), randint(0, 400)))
-
-# seed(0)
 
 island_coords = [[], []]
 
 for angel in range(14):
     if angel < 3:
         continue
-    angel = (angel*pi*32)/180
+    angel = (angel * pi * 32) / 180
     if .5 < angel < 1.5:
         island_coords[0].append(cos(angel) * -180 + 200)
     else:
@@ -148,7 +168,19 @@ print(len(island_coords[0]), len(island_coords[1]))'''
 for num, point in enumerate(woronoi):
     if not inPolygon(*point.get_cords(), island_coords[0], island_coords[1]):
         del woronoi[num]
-print(len(woronoi))
+
+biomes_color = [(162, 207, 255), (77, 165, 74), (221, 221, 36)]
+biomes = []
+for _ in range(10):
+    tmp_point = Point(randint(0, 400), randint(0, 400))
+    while not inPolygon(*tmp_point.get_cords(), island_coords[0], island_coords[1]):
+        tmp_point = Point(randint(0, 400), randint(0, 400))
+    tmp_point.biome = randint(-1, 1)
+    biomes.append(tmp_point)
+
+for point in woronoi:
+    point.biome = find_nearest(point.get_cords(), biomes).biome
+
 '''
 matrix_size = 30
 matrix = [list() for _ in range(matrix_size)]
@@ -159,8 +191,41 @@ for y in range(matrix_size):
 
 pprint(matrix)'''
 
+point_islands_coord = []
+
+for i in zip(island_coords[0], island_coords[1]):
+    point_islands_coord.append(Point(i[0], i[1]))
+
 pnf = PerlinNoiseFactory(seed=0, octaves=4, unbias=True)
 print('GENERATED!')
+
+
+class Block:
+    def __init__(self, height: tuple, biome: int, boarder_dist: float):
+        self.height = height
+        self.biome = biome
+        self.boarder_dist = boarder_dist
+        self.color = [0, 0, 0]
+
+    def render_color(self):
+        cof = self.height
+
+        if self.boarder_dist < 100:
+            if 0 > cof > -0.1:
+                cof -= 1 / self.boarder_dist
+            else:
+                cof -= 2 / self.boarder_dist
+
+        self.color = color_asian(cof)
+
+
+def generate_point(x: int, y: int) -> Block:
+    tmp_block = Block(pnf(x / res, y / res, 0), find_nearest((num_2, num), woronoi).biome,
+                      boarder_dist((x, y), point_islands_coord))
+    tmp_block.render_color()
+    return tmp_block
+
+
 # КОНЕЦ АЛГОРИТМА ГЕНЕРАЦИИ МИРА
 
 
@@ -196,10 +261,7 @@ if __name__ == '__main__':
                         x_coords = [p.get_cords()[0] for p in pp]
                         y_coords = [p.get_cords()[1] for p in pp]'''
                 if inPolygon(num_2, num, island_coords[0][::-1], island_coords[1][::-1]):
-                    pygame.draw.rect(screen, find_nearest((num_2, num), woronoi).color,
-                                     pygame.rect.Rect(num_2, num, 1, 1))
-                    # pygame.draw.rect(screen, color_asian(pnf(num_2 / res, num / res, 0)),
-                    #                  pygame.rect.Rect(num_2, num, 1, 1))
+                    pygame.draw.rect(screen, generate_point(num_2, num).color, pygame.rect.Rect(num_2, num, 1, 1))
                     # a = True
                     # break
                 else:
