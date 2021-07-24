@@ -196,7 +196,7 @@ point_islands_coord = []
 for i in zip(island_coords[0], island_coords[1]):
     point_islands_coord.append(Point(i[0], i[1]))
 
-pnf = PerlinNoiseFactory(seed=0, octaves=4, unbias=True)
+pnf = PerlinNoiseFactory(seed=0, octaves=6, unbias=True)
 print('GENERATED!')
 
 
@@ -220,10 +220,20 @@ class Block:
 
 
 def generate_point(x: int, y: int) -> Block:
-    tmp_block = Block(pnf(x / res, y / res, 0), find_nearest((num_2, num), woronoi).biome,
+    tmp_block = Block(pnf(x / res, y / res, 0), find_nearest((x, y), woronoi).biome,
                       boarder_dist((x, y), point_islands_coord))
     tmp_block.render_color()
     return tmp_block
+
+
+def create_block(x: int, y: int) -> Block:
+    global island_coords
+    if inPolygon(x, y, island_coords[0][::-1], island_coords[1][::-1]):
+        return generate_point(x, y)
+    else:
+        a = Block(-1, 999, 1000)
+        a.color = (0,30,101)
+        return a
 
 
 # КОНЕЦ АЛГОРИТМА ГЕНЕРАЦИИ МИРА
@@ -260,13 +270,11 @@ if __name__ == '__main__':
                         pp = pp1 + pp2
                         x_coords = [p.get_cords()[0] for p in pp]
                         y_coords = [p.get_cords()[1] for p in pp]'''
-                if inPolygon(num_2, num, island_coords[0][::-1], island_coords[1][::-1]):
-                    pygame.draw.rect(screen, generate_point(num_2, num).color, pygame.rect.Rect(num_2, num, 1, 1))
+
+                pygame.draw.rect(screen, create_block(num_2 /4+100, num/4+100).color, pygame.rect.Rect(num_2, num, 1, 1))
                     # a = True
                     # break
-                else:
-                    pygame.draw.rect(screen, (0, 30, 101), pygame.rect.Rect(num_2, num, 1, 1))
-                    # pygame.draw.rect(screen, (230, 50, 50), pygame.rect.Rect(num_2, num, 1, 1))
+
 
             except Exception as e:
                 print(e)
